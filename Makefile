@@ -14,7 +14,9 @@ PGO_PG_FULLVERSION ?= 12.2
 PGO_BACKREST_VERSION ?= 2.24
 
 RELTMPDIR=/tmp/release.$(PGO_VERSION)
+HELMTMPDIR=/tmp/helm-release.$(PGO_VERSION)
 RELFILE=/tmp/postgres-operator.$(PGO_VERSION).tar.gz
+HELMRELFILE=/tmp/postgres-operator-helm-chart.$(PGO_VERSION).tar.gz
 
 # Valid values: buildah (default), docker
 IMGBUILDER ?= buildah
@@ -176,9 +178,12 @@ pull-%:
 release:  linuxpgo macpgo winpgo
 	rm -rf $(RELTMPDIR) $(RELFILE)
 	mkdir $(RELTMPDIR)
+	rm -rf $(RELTMPDIR) $(RELFILE) $(HELMTMPDIR)
+	mkdir $(RELTMPDIR) $(HELMTMPDIR)
 	cp -r $(PGOROOT)/examples $(RELTMPDIR)
 	cp -r $(PGOROOT)/deploy $(RELTMPDIR)
 	cp -r $(PGOROOT)/conf $(RELTMPDIR)
+	cp -r $(PGOROOT)/chart $(HELMTMPDIR)
 	cp $(GOBIN)/pgo $(RELTMPDIR)
 	cp $(GOBIN)/pgo-mac $(RELTMPDIR)
 	cp $(GOBIN)/pgo.exe $(RELTMPDIR)
@@ -187,3 +192,7 @@ release:  linuxpgo macpgo winpgo
 	cp $(GOBIN)/expenv.exe $(RELTMPDIR)
 	cp $(PGOROOT)/examples/pgo-bash-completion $(RELTMPDIR)
 	tar czvf $(RELFILE) -C $(RELTMPDIR) .
+	tar czvf $(HELMRELFILE) -C $(HELMTMPDIR) .
+
+default:
+	all

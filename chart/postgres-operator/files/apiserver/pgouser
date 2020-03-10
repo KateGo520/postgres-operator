@@ -1,0 +1,3 @@
+username:password:pgoadmin
+testuser:testpass:pgoadmin
+readonlyuser:testpass:pgoreader
